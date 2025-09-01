@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Question Paper Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f3f4f6; /* gray-100 */
+            --card-bg-color: rgba(255, 255, 255, 0.85); /* white with transparency */
+            --text-color: #1f2937; /* gray-800 */
+            --muted-text-color: #4b5563; /* gray-600 */
+            --border-color: #e5e7eb; /* gray-200 */
+            --primary-color: #0d9488; /* teal-600 */
+            --primary-hover-color: #0f766e; /* teal-700 */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+        }
+        .question-paper {
+            font-family: 'Hind+Siliguri', sans-serif;
+            line-height: 2.2;
+            color: #1f2937; 
+        }
+        .card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        select, input[type="number"] {
+            background-color: #ffffff;
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        select:focus, input[type="number"]:focus {
+            --tw-ring-color: var(--primary-color);
+        }
+
+        @media print {
+            .no-print { display: none; }
+            body { 
+                margin: 20px; 
+                background-image: none;
+                background-color: #fff; 
+            }
+            #question-paper-container {
+                box-shadow: none; border: none; margin: 0; padding: 0; color: #000;
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                background-color: #fff;
+            }
+        }
+        #generate-btn:disabled { cursor: not-allowed; opacity: 0.6; }
+        
+        #chapter-select::-webkit-scrollbar { width: 8px; }
+        #chapter-select::-webkit-scrollbar-track { background: var(--bg-color); }
+        #chapter-select::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        #chapter-select::-webkit-scrollbar-thumb:hover { background: #a7b6c8; }
+        #chapter-select option { padding: 5px; }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .header-anim {
+            animation: fadeInDown 0.8s ease-out forwards;
+        }
+        .card-anim {
+            animation: fadeInUp 0.8s 0.2s ease-out forwards;
+            opacity: 0;
+        }
+        .footer-anim {
+            animation: fadeInUp 1s 0.4s ease-out forwards;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl" style="perspective: 1000px;">
+        <!-- Header Section -->
+        <header class="text-center mb-8 no-print header-anim">
+            <h1 class="text-4xl md:text-5xl font-bold text-white shadow-lg">Math Paper Generator</h1>
+            <p class="text-gray-200 mt-2">For Class 11 & 12 (Bengali Medium)</p>
+        </header>
+
+        <!-- Controls Section -->
+        <div class="card p-6 rounded-xl shadow-lg mb-8 no-print card-anim" id="controls-card">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Column 1: Basic Settings -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2" style="border-color: var(--border-color);">Basic Settings</h3>
+                    <div>
+                        <label for="class-select" class="font-semibold block mb-2">Class:</label>
+                        <select id="class-select" class="w-full p-2 border rounded-md shadow-sm focus:ring-2">
+                            <option value="11">Class 11</option>
+                            <option value="12">Class 12</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="difficulty-select" class="font-semibold block mb-2">Difficulty Level:</label>
+                        <select id="difficulty-select" class="w-full p-2 border rounded-md shadow-sm focus:ring-2">
+                            <option value="All">All Levels</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Column 2: Chapters -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2" style="border-color: var(--border-color);">Select Chapters</h3>
+                    <div>
+                         <label for="chapter-select" class="font-semibold block mb-2">Chapters (Hold Ctrl/Cmd):</label>
+                        <select id="chapter-select" multiple class="w-full h-32 p-2 border rounded-md focus:ring-2">
+                            <option disabled>Select a class first...</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Column 3: Marks Structure -->
+                <div class="space-y-4">
+                     <h3 class="text-lg font-semibold border-b pb-2" style="border-color: var(--border-color);">Paper Structure</h3>
+                     <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label for="marks-2" class="font-medium">2 Mark Questions:</label>
+                            <input type="number" id="marks-2" value="5" min="0" class="w-20 p-1 border rounded-md text-center focus:ring-2">
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <label for="marks-4" class="font-medium">4 Mark Questions:</label>
+                            <input type="number" id="marks-4" value="8" min="0" class="w-20 p-1 border rounded-md text-center focus:ring-2">
+                        </div>
+                         <div class="flex items-center justify-between">
+                            <label for="marks-5" class="font-medium">5 Mark Questions:</label>
+                            <input type="number" id="marks-5" value="6" min="0" class="w-20 p-1 border rounded-md text-center focus:ring-2">
+                        </div>
+                     </div>
+                </div>
+            </div>
+            <!-- Action Buttons -->
+            <div class="mt-8 pt-6 border-t flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6" style="border-color: var(--border-color);">
+                <button id="generate-btn" class="w-full sm:w-auto text-white font-bold py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105 shadow-md flex items-center justify-center gap-2" style="background-color: var(--primary-color);" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-spin" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM5.404 13.596A6 6 0 1114.596 6.404L10 10l-4.596 3.596z" clip-rule="evenodd" /></svg>
+                    <span>Loading...</span>
+                </button>
+                <button id="print-btn" class="w-full sm:w-auto bg-gray-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-700 transition duration-300 hidden flex items-center justify-center gap-2">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h1v-4a1 1 0 011-1h8a1 1 0 011 1v4h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" /></svg>
+                    <span>Print Paper</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Paper Display Area -->
+        <div id="question-paper-container" class="card p-6 md:p-10 rounded-xl shadow-lg min-h-[600px] card-anim">
+            <div id="placeholder" class="text-center flex flex-col justify-center items-center h-full" style="color: var(--muted-text-color);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <p class="text-lg font-medium">Your question paper will appear here</p>
+                <p class="mt-1">Choose your settings and click "Generate Paper" to begin.</p>
+            </div>
+            <div id="paper-content" class="hidden"></div>
+        </div>
+        
+        <footer class="text-center mt-8 text-sm no-print text-gray-200 footer-anim">
+            <p>&copy; 2025 Math Question Paper Generator. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script>
+        const generateBtn = document.getElementById('generate-btn');
+        const printBtn = document.getElementById('print-btn');
+        const classSelect = document.getElementById('class-select');
+        const difficultySelect = document.getElementById('difficulty-select');
+        const chapterSelect = document.getElementById('chapter-select');
+        const paperContent = document.getElementById('paper-content');
+        const placeholder = document.getElementById('placeholder');
+        
+        let allQuestions = { 11: [], 12: [] };
+        
+        // --- 3D Tilt Effect ---
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                const rotateX = -y / 30; 
+                const rotateY = x / 30;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                card.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+                card.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)';
+            });
+        });
+
+        // --- CSV Parsing and Data Loading ---
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+            const regex = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(regex);
+                if (values.length === headers.length) {
+                    const entry = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        entry[headers[j]] = values[j].trim().replace(/"/g, '');
+                    }
+                    data.push(entry);
+                }
+            }
+            return data;
+        }
+
+        async function loadQuestionsFromCSV() {
+            try {
+                const response = await fetch('Math_Database.csv');
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const csvText = await response.text();
+                const parsedData = parseCSV(csvText);
+                
+                allQuestions = { 11: [], 12: [] };
+                parsedData.forEach(q => {
+                    if (!q.class_level || !q.question_text) return;
+                    const questionData = { ...q, marks: parseInt(q.marks, 10) || 0 };
+                    if (q.class_level === '11') allQuestions[11].push(questionData);
+                    else if (q.class_level === '12') allQuestions[12].push(questionData);
+                });
+
+                console.log("Questions successfully loaded from CSV.");
+                updateChapterList();
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg><span>Generate Paper</span>`;
+
+            } catch (error) {
+                console.error("Error loading questions from CSV: ", error);
+                placeholder.innerHTML = `<p class="text-red-500">Failed to load questions. Please ensure the 'Math_Database.csv' file is uploaded.</p>`;
+                generateBtn.textContent = 'Data Load Failed';
+            }
+        }
+        
+        // --- UI Update Functions ---
+        function updateChapterList() {
+            const selectedClass = classSelect.value;
+            const chapters = [...new Set(allQuestions[selectedClass].map(q => q.chapter))].sort();
+            chapterSelect.innerHTML = chapters.length === 0 
+                ? '<option disabled>No chapters found.</option>' 
+                : chapters.map(c => c ? `<option value="${c}">${c}</option>` : '').join('');
+        }
+        
+        // --- Paper Generation Logic ---
+        function getRandomElements(arr, n) {
+            if (!arr || arr.length === 0) return [];
+            const shuffled = [...arr].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, n);
+        }
+
+        function generatePaper() {
+            const selectedClass = classSelect.value;
+            const selectedDifficulty = difficultySelect.value;
+            const selectedChapters = Array.from(chapterSelect.selectedOptions).map(opt => opt.value);
+            
+            let filteredQuestions = allQuestions[selectedClass];
+            if (selectedDifficulty !== 'All') {
+                filteredQuestions = filteredQuestions.filter(q => q.difficulty === selectedDifficulty);
+            }
+            if (selectedChapters.length > 0) {
+                filteredQuestions = filteredQuestions.filter(q => selectedChapters.includes(q.chapter));
+            }
+            
+            const marksStructure = {
+                2: parseInt(document.getElementById('marks-2').value, 10) || 0,
+                4: parseInt(document.getElementById('marks-4').value, 10) || 0,
+                5: parseInt(document.getElementById('marks-5').value, 10) || 0
+            };
+            
+            let totalMarks = (marksStructure[2]*2) + (marksStructure[4]*4) + (marksStructure[5]*5);
+            
+            let paperHTML = `<div class="text-center border-b-2 pb-4 mb-6" style="border-color: var(--border-color); font-family: 'Inter', sans-serif;">
+                <h2 class="text-2xl font-bold">Selection Test - 2025</h2>
+                <h3 class="text-xl font-semibold">Class ${selectedClass}</h3>
+                <p class="font-medium">Subject: Mathematics</p>
+                <div class="flex justify-between mt-2 text-sm">
+                    <span>Full Marks: ${totalMarks}</span>
+                    <span>Time: 3 Hours 15 Minutes</span>
+                </div>
+            </div>`;
+
+            let warnings = [];
+            const sectionConfig = [
+                { marks: 2, title: "Section - A (Marks - 2)", num: marksStructure[2] },
+                { marks: 4, title: "Section - B (Marks - 4)", num: marksStructure[4] },
+                { marks: 5, title: "Section - C (Marks - 5)", num: marksStructure[5] }
+            ];
+
+            sectionConfig.forEach(section => {
+                if (section.num > 0) {
+                    const questionPool = filteredQuestions.filter(q => q.marks === section.marks);
+                    const selectedQs = getRandomElements(questionPool, section.num);
+
+                    if (selectedQs.length < section.num) {
+                        warnings.push(`Not enough questions for ${section.marks} marks (required ${section.num}, found ${selectedQs.length}).`);
+                    }
+
+                    if (selectedQs.length > 0) {
+                         paperHTML += `<div class="mb-6"><h4 class="text-lg font-bold underline" style="font-family: 'Inter', sans-serif;">${section.title}</h4><p class="mb-2 ml-4" style="font-family: 'Inter', sans-serif;">Answer any ${section.num} questions:</p><ol class="list-decimal list-inside ml-4 question-paper">`;
+                         selectedQs.forEach(q => { paperHTML += `<li class="mb-2">${q.question_text}</li>`; });
+                         paperHTML += `</ol></div>`;
+                    }
+                }
+            });
+            
+            if (warnings.length > 0) {
+                paperHTML = `<div class="bg-yellow-200 border-l-4 border-yellow-500 text-yellow-800 p-4 mb-4 rounded-md" role="alert"><p class="font-bold">Warning</p><ul class="list-disc list-inside ml-4">${warnings.map(w => `<li>${w}</li>`).join('')}</ul></div>` + paperHTML;
+            }
+
+            placeholder.classList.add('hidden');
+            paperContent.innerHTML = paperHTML;
+            paperContent.classList.remove('hidden');
+            printBtn.classList.remove('hidden');
+        }
+
+        function printPaper() { window.print(); }
+
+        // --- Event Listeners and Initial Load ---
+        generateBtn.addEventListener('click', generatePaper);
+        printBtn.addEventListener('click', printPaper);
+        classSelect.addEventListener('change', updateChapterList);
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestionsFromCSV();
+        });
+    </script>
+</body>
+</html>
+
