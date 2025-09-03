@@ -2,7 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Paper Generator - Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; /* Slate 950 */
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            transform-style: preserve-3d;
+        }
+        .bg-layer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover;
+            background-position: center;
+        }
+        .bg-gradient {
+            background: radial-gradient(circle, rgba(13, 148, 136, 0.3) 0%, rgba(2, 6, 23, 0.8) 70%);
+            transform: translateZ(-50px) scale(1.6);
+        }
+        .bg-image {
+            background-image: url('https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop');
+            opacity: 0.2;
+            transform: translateZ(-100px) scale(2);
+        }
+        .content-layer {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) translateZ(0);
+            text-align: center;
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-anim {
+            animation: fadeIn 1s 0.2s ease-out forwards, fadeInUp 1s 0.2s ease-out forwards;
+            opacity: 0;
+        }
+        .subtitle-anim {
+            animation: fadeIn 1s 0.5s ease-out forwards, fadeInUp 1s 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        .button-anim {
+            animation: fadeIn 1s 0.8s ease-out forwards, fadeInUp 1s 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .cta-button {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.2), 0 0 0 2px #14b8a6;
+        }
+        .cta-button:hover {
+            transform: scale(1.05) translateZ(20px);
+            box-shadow: 0 15px 30px rgba(13, 148, 136, 0.3), 0 0 0 4px #2dd4bf;
+        }
+        .cta-button:active {
+            transform: scale(1) translateZ(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="scene" id="scene">
+        <div class="bg-layer bg-gradient"></div>
+        <div class="bg-layer bg-image"></div>
+        <div class="content-layer">
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-white title-anim" style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                Effortless Math Papers
+            </h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto subtitle-anim">
+                Instantly generate custom math question papers for Class 11 & 12 (Bengali Medium).
+            </p>
+            <a href="generator.html" class="mt-10 inline-block bg-teal-500 text-white font-bold py-4 px-10 rounded-lg text-lg cta-button button-anim">
+                Start Generating &rarr;
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const scene = document.getElementById('scene');
+        document.body.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            scene.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+    </script>
+</body>
+</html>
+
+name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math Paper Generator - Welcome</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
