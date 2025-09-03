@@ -11,7 +11,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #020617; /* Slate 950 */
+            /* Vibrant Gradient Background */
+            background-color: #111827; /* Gray-900 fallback */
             overflow: hidden;
             perspective: 1000px;
         }
@@ -20,6 +21,10 @@
             width: 100vw;
             height: 100vh;
             transform-style: preserve-3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         .bg-layer {
             position: absolute;
@@ -27,83 +32,76 @@
             background-size: cover;
             background-position: center;
         }
+        /* New background gradient with more vibrant colors */
         .bg-gradient {
-            background: radial-gradient(circle, rgba(13, 148, 136, 0.3) 0%, rgba(2, 6, 23, 0.8) 70%);
-            transform: translateZ(-50px) scale(1.6);
+            background: radial-gradient(circle at 50% 50%, rgba(29, 78, 216, 0.3), transparent 70%),
+                        radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.25), transparent 60%),
+                        radial-gradient(circle at 90% 80%, rgba(30, 64, 175, 0.25), transparent 60%);
+            animation: pulse-glow 15s infinite alternate;
         }
-        .bg-image {
-            background-image: url('https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=2070&auto=format&fit=crop');
-            opacity: 0.2;
-            transform: translateZ(-100px) scale(2);
+        /* Grid pattern overlay */
+        .bg-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform: translateZ(-50px) scale(1.5);
+            animation: move-grid 60s linear infinite;
         }
         .content-layer {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) translateZ(0);
-            text-align: center;
-            color: white;
+            position: relative;
+            z-index: 10;
+            transform: translateZ(50px);
+            padding: 1rem;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; } to { opacity: 1; }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .title-anim {
-            animation: fadeIn 1s 0.2s ease-out forwards, fadeInUp 1s 0.2s ease-out forwards;
-            opacity: 0;
-        }
-        .subtitle-anim {
-            animation: fadeIn 1s 0.5s ease-out forwards, fadeInUp 1s 0.5s ease-out forwards;
-            opacity: 0;
-        }
-        .button-anim {
-            animation: fadeIn 1s 0.8s ease-out forwards, fadeInUp 1s 0.8s ease-out forwards;
-            opacity: 0;
-        }
-
+        /* New button styling for a more vibrant CTA */
         .cta-button {
+            background: linear-gradient(45deg, #3b82f6, #6366f1);
             transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.2), 0 0 0 2px #14b8a6;
+            box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.4), 0 10px 10px -5px rgba(99, 102, 241, 0.2);
+            transform: translateZ(0); /* For 3D context */
         }
         .cta-button:hover {
             transform: scale(1.05) translateZ(20px);
-            box-shadow: 0 15px 30px rgba(13, 148, 136, 0.3), 0 0 0 4px #2dd4bf;
+            box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.5), 0 10px 15px -5px rgba(99, 102, 241, 0.3);
         }
         .cta-button:active {
             transform: scale(1) translateZ(10px);
         }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+        @keyframes move-grid {
+            from { background-position: 0 0; }
+            to { background-position: -60px 60px; }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .title-anim { animation: fade-in-up 0.8s 0.2s both cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .subtitle-anim { animation: fade-in-up 0.8s 0.4s both cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .button-anim { animation: fade-in-up 0.8s 0.6s both cubic-bezier(0.25, 0.46, 0.45, 0.94); }
     </style>
 </head>
 <body>
     <div class="scene" id="scene">
         <div class="bg-layer bg-gradient"></div>
-        <div class="bg-layer bg-image"></div>
+        <div class="bg-layer bg-grid"></div>
         <div class="content-layer">
-            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-white title-anim" style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <!-- Title with a vibrant gradient text color -->
+            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-purple-300 to-indigo-300 title-anim" style="text-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                 Effortless Math Papers
             </h1>
             <p class="mt-4 text-lg md:text-xl text-gray-300 max-w-3xl mx-auto subtitle-anim">
                 Instantly generate custom math question papers for Class 11 & 12 (Bengali Medium).
             </p>
-            <a href="generator.html" class="mt-10 inline-block bg-teal-500 text-white font-bold py-4 px-10 rounded-lg text-lg cta-button button-anim">
+            <a href="generator.html" class="mt-10 inline-block text-white font-bold py-4 px-10 rounded-lg text-lg cta-button button-anim">
                 Start Generating &rarr;
             </a>
         </div>
     </div>
-
-    <script>
-        const scene = document.getElementById('scene');
-        document.body.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-            scene.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-        });
-    </script>
 </body>
 </html>
-
